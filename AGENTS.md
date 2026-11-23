@@ -10,6 +10,9 @@ TypeScript run by Bun; there is no Python code any more.
 - `src/steam-api.ts`: the three Steam Web API calls, URL builders and response parsers.
 - `src/utils.ts`: the intersection, result formatting and timestamped file writer.
 - `src/*.test.ts`: the `bun test` suite.
+- `lefthook.yml`: loads the shared hook jobs from `simpsonm09/.github` at `hooks-v2`. The
+  `core-policy` job refuses a push to `main` and refuses unsigned commits; `owner-signing`
+  refuses a commit when this checkout cannot sign.
 - `docs/exceptions.md`: rules this repository cannot meet, with reasons and revisit dates.
 
 ## Commands
@@ -19,7 +22,8 @@ TypeScript run by Bun; there is no Python code any more.
 - `just fmt` / `just fmt-check` format and verify the repository.
 - `just lint` runs `oxlint`; `just typecheck` runs `bun check`; `just test` runs `bun test`.
 - `just check` is the gate: `fmt-check`, `lint`, `typecheck`, `test` and `agent-files`.
-- `just hooks` installs `.githooks/pre-push` for this clone only.
+- `just hooks` installs the shared Lefthook hooks into `.git/hooks` for every worktree of this
+  clone; it migrates only an old `.githooks` path and never changes global Git settings.
 
 ## Invariants
 
@@ -36,6 +40,8 @@ TypeScript run by Bun; there is no Python code any more.
 
 - Push to `main`. It is a public repository with the `protect-main` ruleset: work on a branch and
   merge a pull request.
+- Skip hooks (C7.11): never set `LEFTHOOK=0`, never pass `--no-verify`, and never add a
+  `lefthook-local.yml`. Hooks are advisory for humans; the ruleset and CI are the enforcement.
 - Change GitHub settings, repository visibility or access from a workflow, script or agent run.
 - Add a dependency that a stdlib or Bun built-in can replace, and do not add a `lint` script to
   `package.json`: `bun lint` would run it instead of the linter.
