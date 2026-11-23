@@ -1,54 +1,86 @@
 # Steam Wishlist Cleanup
 
-This Python script allows you to compare your Steam wishlist with the libraries of your friends or family members. It identifies games that are both in your wishlist and in the libraries of the specified Steam accounts.
+Compare your Steam wishlist with the libraries of friends or family members. The tool prints the
+games that are both on your wishlist and already available through one of those accounts, then
+saves the same list to a timestamped file.
 
-https://steamcommunity.com/dev
-https://steamwebapi.azurewebsites.net/
+- [Steam Web API](https://steamcommunity.com/dev)
+- [Steam Web API documentation](https://steamwebapi.azurewebsites.net/)
 
 ## Features
-- Fetches your Steam wishlist using the Steam Web API.
-- Fetches the libraries of your friends or family members using their Steam IDs.
-- Compares your wishlist with the combined libraries of the specified accounts.
-- Outputs a list of games that are present in both your wishlist and the specified libraries.
+
+- Fetches your wishlist with the Steam Web API.
+- Fetches the owned games of every Steam ID you name.
+- Intersects the wishlist with the combined libraries, keeping wishlist order.
+- Prints the result and writes `output/results_<timestamp>.txt`.
 
 ## Prerequisites
-- Python 3.x installed on your system.
-- A Steam API key. You can get one from [Steam's API Key page](https://steamcommunity.com/dev/apikey).
 
-## Project Structure
+- [mise](https://mise.jdx.dev/) and [just](https://github.com/casey/just) (mise installs `just`).
+- A Steam API key from [Steam's API key page](https://steamcommunity.com/dev/apikey).
 
-```
-steam-wishlist-cleanup
-├── src
-│   ├── main.py          # Entry point of the application
-│   ├── steam_api.py     # Functions to interact with the Steam API
-│   ├── utils.py         # Utility functions for comparison
-│   └── __init__.py      # Marks the directory as a Python package
-├── requirements.txt      # Lists project dependencies
-├── .gitignore            # Specifies files to ignore in Git
-└── README.md             # Project documentation
+## Install
+
+```bash
+git clone https://github.com/simpsonm09/steam-wishlist-cleanup.git
+cd steam-wishlist-cleanup
+just install
 ```
 
-## Installation
-1. Clone this repository or download the source code.
-2. Install the required Python dependencies:
-   ```bash
-   pip install requests
-   ```
+`just install` installs the pinned `just` and `bun` versions from `mise.toml`, then installs the Bun
+dev dependencies from the lockfile.
 
 ## Usage
 
-1. Open `src/main.py` and set your Steam user ID and the Steam IDs of your friends or family members.
-2. Run the script:
-   ```
-   python src/main.py
-   ```
-3. The script will fetch your wishlist and the libraries of the specified accounts, then display any games that are present in both lists.
+```bash
+just run
+```
+
+The tool prompts for three values:
+
+1. Your Steam API key.
+2. Your Steam user ID (the 64-bit `steamID64`, not the account name).
+3. The Steam IDs of the family members or friends, comma-separated.
+
+It waits five seconds between Steam API requests, then prints the overlap and saves it to
+`output/results_<timestamp>.txt`. `output/` is ignored by Git.
+
+To hardcode the values instead of typing them, set `HARDCODED_API_KEY`, `HARDCODED_USER_ID` and
+`HARDCODED_FAMILY_IDS` at the top of `src/main.ts`. Do not commit a real key or Steam IDs.
+
+## Development
+
+```bash
+just fmt        # format
+just fmt-check  # formatting gate
+just lint       # oxlint
+just typecheck  # bun check
+just test       # bun test
+just check      # everything CI requires
+```
+
+## Project structure
+
+```text
+steam-wishlist-cleanup
+├── src
+│   ├── main.ts           # interactive entry point
+│   ├── steam-api.ts      # Steam Web API calls and parsers
+│   ├── utils.ts          # intersection, formatting and file output
+│   ├── steam-api.test.ts
+│   └── utils.test.ts
+├── .github/workflows     # ci.yml and Dependabot automerge
+├── justfile              # every command
+├── mise.toml             # pinned toolchain
+├── package.json          # Bun dev dependencies
+└── AGENTS.md             # agent instructions
+```
 
 ## Contributing
 
-Feel free to submit issues or pull requests if you have suggestions or improvements for the project.
+Open an issue or a pull request. `main` changes only through a pull request with the four required
+checks passing.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+MIT. See [LICENSE](LICENSE).
