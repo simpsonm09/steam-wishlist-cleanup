@@ -10,7 +10,7 @@ TypeScript run by Bun; there is no Python code any more.
 - `src/steam-api.ts`: the three Steam Web API calls, URL builders and response parsers.
 - `src/utils.ts`: the intersection, result formatting and timestamped file writer.
 - `src/*.test.ts`: the `bun test` suite.
-- `lefthook.yml`: loads the shared hook jobs from `simpsonm09/.github` at `hooks-v2`. The
+- `lefthook.yml`: loads the shared hook jobs from `simpsonm09/.github` at `hooks-v3`. The
   `core-policy` job refuses a push to `main` and refuses unsigned commits; `owner-signing`
   refuses a commit when this checkout cannot sign.
 - `docs/exceptions.md`: rules this repository cannot meet, with reasons and revisit dates.
