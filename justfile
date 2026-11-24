@@ -112,9 +112,13 @@ signing-check:
 hook-pre-push:
     mise exec -- bun scripts/git-hook.ts pre-push
 
-# Fast subset for pre-push (C7.10): type-check, under 30 s.
+# Fast subset for pre-push (C7.10). It runs the same recipes the required
+# pull-request checks run, so CI confirms what the hook already caught (C5.7).
 pre-push-check:
+    just fmt-check
+    just lint
     just typecheck
+    just test
 
 # Refresh the pinned tools when mise.toml changed (post-checkout, post-merge).
 deps-refresh:
